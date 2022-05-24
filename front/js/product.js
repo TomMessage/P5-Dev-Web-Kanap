@@ -11,7 +11,7 @@ function getOneProduct(id) {
 function getProductIdFromUrl () {
     return new URL(location.href).searchParams.get("id");
 }
-
+const productId = getProductIdFromUrl();
 
 
 function renderProduct(product) {
@@ -29,15 +29,75 @@ function renderProduct(product) {
     productOption.insertAdjacentHTML("beforeend", product.colors.map(color => `<option value="${color}">${color}</option>`))
     
 }
-
-
-// créer fonction render pour unb seul produit 
-
 async function displayProduct () {
-    const productId = getProductIdFromUrl();
+    
     const product = await getOneProduct(productId);
     renderProduct (product);
 
 }
+
+
+function addToCart (){
+
+    // -------------Gestion du panier--------------------
+    const colorOption = document.querySelector("#colors");
+    console.log(colorOption);
+
+    const quantityOption = document.querySelector("#quantity");
+    console.log(quantityOption);
+
+    // séléction du bouton ajouter au panier
+    const addToCart = document.querySelector("#addToCart");
+
+    //Ecouter le bouton et envoyer le panier
+    addToCart.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (
+            quantityOption.value < 1 || quantityOption.value > 100 || quantityOption.value === undefined || colorOption.value === "" || colorOption.value === undefined
+          ) {
+            alert("Veuillez renseigner une couleur et une quantité");
+            console.log(alert);
+          } else {
+           
+          }
+        
+        // variable pour mettre le choix de l'utilisateur 
+        let productOptions = {
+            color : colorOption.value,
+            quantity : parseInt(quantityOption.value),
+            id : productId,  
+        }
+        console.log(productOptions);
+        if(productOptions.color && productOptions.quantity){
+            manageLocalStorage(productOptions);
+        }
+
+    });
+
+}
+
+function manageLocalStorage (selectedProduct){
+
+    //-----------------LOCAL STORAGE-------------------- 
+    // déclaration de la variable contenant les produits enregistrés dans le local storage
+    // parse c'est pour convertir les données du local storage au format json en objet javascript
+    let productInLocalStorage = JSON.parse(localStorage.getItem("product") )|| []; 
+
+    const index = productInLocalStorage.findIndex( p =>  p.color === selectedProduct.color && p.id === selectedProduct.id );
+    if(index === -1){
+        productInLocalStorage.push(selectedProduct);
+    } else {
+        productInLocalStorage[index].quantity += selectedProduct.quantity;
+    }
+    localStorage.setItem("product", JSON.stringify(productInLocalStorage));
+}
+
 displayProduct();
+addToCart();
+
+
+
+
+
+
 
