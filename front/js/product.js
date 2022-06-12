@@ -1,5 +1,5 @@
 function getOneProduct(id) {
-    return fetch("http://localhost:3000/api/products/" +id)
+    return fetch("http://localhost:3000/api/products/" + id)
         .then(function (res) {
             return res.json();
         })
@@ -8,7 +8,7 @@ function getOneProduct(id) {
         })
 }
 
-function getProductIdFromUrl () {
+function getProductIdFromUrl() {
     return new URL(location.href).searchParams.get("id");
 }
 const productId = getProductIdFromUrl();
@@ -25,19 +25,19 @@ function renderProduct(product) {
     productTitle.textContent = `${product.name}`;
     productPrice.textContent = `${product.price}`;
     productDescription.textContent = `${product.description}`;
-   
+
     productOption.insertAdjacentHTML("beforeend", product.colors.map(color => `<option value="${color}">${color}</option>`))
-    
+
 }
-async function displayProduct () {
-    
+async function displayProduct() {
+
     const product = await getOneProduct(productId);
-    renderProduct (product);
+    renderProduct(product);
 
 }
 
 
-function addToCart (){
+function addToCart() {
 
     // -------------Gestion du panier--------------------
     const colorOption = document.querySelector("#colors");
@@ -54,37 +54,33 @@ function addToCart (){
         event.preventDefault();
         if (
             quantityOption.value < 1 || quantityOption.value > 100 || quantityOption.value === undefined || colorOption.value === "" || colorOption.value === undefined
-          ) {
-            alert("Veuillez renseigner une couleur et une quantité");
+        ) {
+            alert("Veuillez renseigner une couleur et une quantité entre 1 et 100");
             console.log(alert);
-          } else {
-           
-          }
-        
-        // variable pour mettre le choix de l'utilisateur 
-        let productOptions = {
-            color : colorOption.value,
-            quantity : parseInt(quantityOption.value),
-            id : productId,  
+        } else {
+            // variable pour mettre le choix de l'utilisateur 
+            let productOptions = {
+                color: colorOption.value,
+                quantity: parseInt(quantityOption.value),
+                id: productId,
+            }
+            console.log(productOptions);
+            if (productOptions.color && productOptions.quantity) {
+                manageLocalStorage(productOptions);
+            }
         }
-        console.log(productOptions);
-        if(productOptions.color && productOptions.quantity){
-            manageLocalStorage(productOptions);
-        }
-
     });
-
 }
 
-function manageLocalStorage (selectedProduct){
+function manageLocalStorage(selectedProduct) {
 
     //-----------------LOCAL STORAGE-------------------- 
     // déclaration de la variable contenant les produits enregistrés dans le local storage
     // parse c'est pour convertir les données du local storage au format json en objet javascript
-    let productInLocalStorage = JSON.parse(localStorage.getItem("product") )|| []; 
-
-    const index = productInLocalStorage.findIndex( p =>  p.color === selectedProduct.color && p.id === selectedProduct.id );
-    if(index === -1){
+    let productInLocalStorage = JSON.parse(localStorage.getItem("product")) || [];
+console.log(productInLocalStorage);
+    const index = productInLocalStorage.findIndex(p => p.color === selectedProduct.color && p.id === selectedProduct.id);
+    if (index === -1) {
         productInLocalStorage.push(selectedProduct);
     } else {
         productInLocalStorage[index].quantity += selectedProduct.quantity;
