@@ -6,6 +6,10 @@ function getOneProduct(id) {
     .then(product => {
       return product;
     })
+    .catch(error => {
+      const items = document.querySelector(".cart");
+      items.innerHTML = "serveur indisponible";
+  })
 }
 let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
 
@@ -93,17 +97,16 @@ async function changeQuantity(btnQuantity) {
   btnQuantity.addEventListener('change', e => {
     e.preventDefault();
     console.log(e);
-    const inputQuantity = document.querySelector(".itemQuantity");
     const product = e.target.closest(".cart__item");
     console.log(product.dataset.color);
-    console.log(inputQuantity.value);
+    console.log(btnQuantity.valueAsNumber);
     // à ce niveau là le changement de quantité est pris en compte mais pas encore enregistré
     // faire un find index pour modif la quantité dans le local storage
     const index = productInLocalStorage.findIndex(p => p.color === product.dataset.color && p.id === product.dataset.id);
     if (index === -1) {
       return;
     } else {
-      productInLocalStorage[index].quantity = inputQuantity.value;
+      productInLocalStorage[index].quantity = btnQuantity.valueAsNumber;
     }
     localStorage.setItem("product", JSON.stringify(productInLocalStorage));
     location.reload();
@@ -161,12 +164,15 @@ function validEmail() {
   let regValidEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
   let testEmail = regValidEmail.test(email.value);
   let messageEmail = document.querySelector("#emailErrorMsg");
-  if (testEmail) {
-    messageEmail.innerHTML = '✓';
+  if (testEmail === false && email.value.length) {
+    messageEmail.innerHTML = 'Email non Valide';
   }
   else {
-    messageEmail.innerHTML = 'Adresse non Valide';
-};};
+    messageEmail.innerHTML = '';
+    if (email.value.length)  return true;
+    return false;
+};
+};
 validEmail();
 
 // définition des regex pour validation prénom
@@ -178,11 +184,13 @@ function validSurname() {
   let regLetter = /^[A-Za-z\é\è\ê\-]+$/;
   let testSurname = regLetter.test(firstName.value);
   let messageFirstName = document.querySelector("#firstNameErrorMsg");
-  if (testSurname) {
-    messageFirstName.innerHTML = '✓';
+  if (testSurname === false && firstName.value.length) {
+    messageFirstName.innerHTML = 'Prénom non Valide';
   }
   else {
-    messageFirstName.innerHTML = 'Prénom non valide';
+    messageFirstName.innerHTML = '';
+    if (firstName.value.length)  return true;
+    return false;
 };
 };
 validSurname();
@@ -196,12 +204,15 @@ function validName() {
   let regValidName = /^[A-Za-z\é\è\ê\-]+$/;
   let testName = regValidName.test(lastName.value);
   let messageName = document.querySelector("#lastNameErrorMsg");
-  if (testName) {
-    messageName.innerHTML = '✓';
-  }
-  else {
-    messageName.innerHTML = 'Nom non Valide';
-};};
+  if (testName === false && lastName.value.length) {
+    messageName.innerHTML = 'Nom non Valide'; 
+    return false;
+  }else{
+    messageName.innerHTML = '';
+    if (lastName.value.length)  return true;
+    return false;
+  };
+};
 validName();
 
 // définition des regex pour validation adresse
@@ -213,17 +224,20 @@ function validAddress() {
   let regValidAddress =  /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
   let testAddress = regValidAddress.test(address.value);
   let messageAddress = document.querySelector("#addressErrorMsg");
-  if (testAddress) {
-    messageAddress.innerHTML = '✓';
-  }
-  else {
-    messageAddress.innerHTML = 'Adresse non Valide';
-};};
+  if (testAddress === false && address.value.length) {
+    messageAddress.innerHTML = 'Adresse non Valide'; 
+    return false;
+  }else{
+    messageAddress.innerHTML = '';
+    if (address.value.length)  return true;
+    return false;
+  };
+};
 validAddress();
 
 // définition des regex pour validation ville
 function validCity() {
-  // écouter la modification de l'email 
+  
   form.city.addEventListener('change', function () {
     validCity(this);
   });

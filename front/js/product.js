@@ -6,6 +6,10 @@ function getOneProduct(id) {
         .then(product => {
             return product;
         })
+        .catch(error => {
+            const items = document.querySelector(".item");
+            items.innerHTML = "serveur indisponible";
+        })
 }
 
 function getProductIdFromUrl() {
@@ -25,7 +29,7 @@ function renderProduct(product) {
     productTitle.textContent = `${product.name}`;
     productPrice.textContent = `${product.price}`;
     productDescription.textContent = `${product.description}`;
-
+// Adjacent HTML = ajoute dans l'ordre défini --- map = fonction pour reformater le tableau
     productOption.insertAdjacentHTML("beforeend", product.colors.map(color => `<option value="${color}">${color}</option>`))
 
 }
@@ -61,7 +65,7 @@ function addToCart() {
             // variable pour mettre le choix de l'utilisateur 
             let productOptions = {
                 color: colorOption.value,
-                quantity: parseInt(quantityOption.value),
+                quantity: parseInt(quantityOption.valueAsNumber),
                 id: productId,
             }
             console.log(productOptions);

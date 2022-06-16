@@ -5,6 +5,10 @@ function getAllProducts() {
         })
         .then(products => {
             return products;
+        }) 
+        .catch(error => {
+            const items = document.querySelector("#items");
+            items.innerHTML = "serveur indisponible";
         })
 }
 
